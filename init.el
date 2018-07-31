@@ -1,10 +1,10 @@
 
-;; Added by Package.el.  This must come before configurations of
+; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 (package-initialize)
-
+(require 'company) 
 (require 'exwm)
 (require 'exwm-config)
 (exwm-config-default)
@@ -57,6 +57,10 @@
 (require 'evil)
 (require 'projectile)
 (require 'helm-projectile)
+
+(helm-projectile-on)
+
+(add-hook 'after-init-hook 'global-company-mode)
 
 (global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
@@ -214,4 +218,6 @@
 ;;   )
 
 
+;; workaround to get ediff to work!
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (set-background-color "grey90")
