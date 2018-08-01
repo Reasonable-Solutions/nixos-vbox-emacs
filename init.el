@@ -1,4 +1,3 @@
-
 ; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
@@ -7,29 +6,49 @@
 (require 'company) 
 (require 'exwm)
 (require 'exwm-config)
-(exwm-config-default)
+(require 'hydra)
+(require 'evil)
+(require 'projectile)
+(require 'helm-projectile)
+(require 'helm-config)
+(require 'magit)
+(require 'evil)
+(require 'evil-magit)
+(require 'projectile)
 
+(exwm-config-default)
+(exwm-input-set-key (kbd "s-p") #'helm-run-external-command)
+
+(which-key-mode t)
 ;; use fira code in 18
 ;; TODO replace with Pragmata Pro
 (setq default-frame-alist '((font . "Fira Code-12"))) 
 
 
-(require 'helm-config)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (helm-mode 1)
-
-(require 'magit)
-(require 'evil)
-(require 'evil-magit)
-
-(evil-mode 1)
-(require 'projectile)
+(evil-mode 1) 
+(projectile-mode +1) 
+(projectile-global-mode t) 
 ;; no toolbars
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
 (load-theme 'leuven t)
 (display-time)
+
+;; better defaults
+(setq visible-bell nil
+      inhibit-startup-message t
+      color-theme-is-global t
+      sentence-end-double-space nil
+      shift-select-mode nil
+      uniquify-buffer-name-style 'forward
+      whitespace-style '(face trailing lines-tail tabs)
+      whitespace-line-column 80
+      default-directory "~"
+      fill-column 80
+ediff-split-window-function 'split-window-horizontally)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 (defalias 'auto-tail-revert-mode 'tail-mode)
@@ -46,18 +65,7 @@
 ;; Make emacs behave sanely (overwrite selected text)
 (delete-selection-mode 1)
 
-;; Keep your temporary files in tmp, emacs!
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-(setq backup-directory-alist
-`((".*" . ,temporary-file-directory)))
-
-;;;;;;;;;;;;;;;;; Evil keys
-(require 'hydra)
-(require 'evil)
-(require 'projectile)
-(require 'helm-projectile)
-
+;;;;;;;;;;;;;;;; Evil keys
 (helm-projectile-on)
 
 (add-hook 'after-init-hook 'global-company-mode)
@@ -221,3 +229,22 @@
 ;; workaround to get ediff to work!
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (set-background-color "grey90")
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values
+   (quote
+    ((eval progn
+           (add-to-list
+            (quote exec-path)
+            (concat
+             (locate-dominating-file default-directory ".dir-locals.el")
+             "node_modules/.bin/")))))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
