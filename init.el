@@ -2,6 +2,7 @@
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
+(add-to-list 'load-path "~/.emacs.d/lisp/") 
 (package-initialize)
 (require 'company) 
 (require 'exwm)
@@ -15,6 +16,15 @@
 (require 'evil)
 (require 'evil-magit)
 (require 'projectile)
+(require 'powerline)
+(powerline-default-theme)
+(require 'git-gutter) 
+(global-git-gutter-mode +1)
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+(setq uniquify-separator "/")
+(setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
+(setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
 (exwm-config-default)
 (exwm-input-set-key (kbd "s-p") #'helm-run-external-command)
