@@ -251,7 +251,9 @@ ediff-split-window-function 'split-window-horizontally)
             (quote exec-path)
             (concat
              (locate-dominating-file default-directory ".dir-locals.el")
-             "node_modules/.bin/")))))))
+             "node_modules/.bin/"))))))
+ '(scss-compile-at-save nil))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
