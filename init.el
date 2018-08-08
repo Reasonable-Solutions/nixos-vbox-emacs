@@ -2,7 +2,6 @@
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
-(add-to-list 'load-path "~/.emacs.d/lisp/") 
 (package-initialize)
 (require 'company) 
 (require 'exwm)
@@ -25,6 +24,20 @@
 (setq uniquify-separator "/")
 (setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
+
+
+(add-to-list 'load-path "~/.emacs.d/lisp/") 
+
+;; Melpa - only because git-timemachine is broken on nixos
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+
+(require 'use-package)
+(use-package git-timemachine
+:ensure t
+:defer t)
+
+(require 'eshell-git-prompt)
+(eshell-git-prompt-use-theme 'git-radar)
 
 (exwm-config-default)
 (exwm-input-set-key (kbd "s-p") #'helm-run-external-command)
@@ -112,6 +125,7 @@ ediff-split-window-function 'split-window-horizontally)
   "v" 'hydra-expand-region/body
   "j" 'hydra-jump/body
   "b" 'hydra-buffers/body
+  "a" 'hydra-apps/body
   "p" 'hydra-projectile/body
   "n" 'hydra-narrow/body
   "s" 'hydra-search/body
@@ -119,7 +133,13 @@ ediff-split-window-function 'split-window-horizontally)
   "e" 'hydra-errors/body
   "x" 'hydra-eval-thing/body
   "r" 'hydra-helm-resume/body
-  )
+  ) 
+
+(defhydra hydra-apps ()
+  "apps"
+  ("d" dired "dired" :exit t)
+  ) 
+
 
 (defhydra hydra-narrow ()
   "projectile"
@@ -189,10 +209,10 @@ ediff-split-window-function 'split-window-horizontally)
   "magit"
   ("s" magit-status "magit-status" :exit t)
   ("b" magit-blame "magit-blame" :exit t)
- ;; ("t" git-timemachine "git-timemachine")
- ;; ("n" git-timemachine-show-next-revision "git-timemachine next")
- ;; ("p" git-timemachine-show-previous-revision "git-timemachine prev")
- ;; ("q" git-timemachine-quit "git-timemachine-quit")
+  ("t" git-timemachine "git-timemachine")
+  ("n" git-timemachine-show-next-revision "git-timemachine next")
+  ("p" git-timemachine-show-previous-revision "git-timemachine prev")
+  ("q" git-timemachine-quit "git-timemachine-quit")
   )
 
 (defhydra hydra-files ()
@@ -235,6 +255,10 @@ ediff-split-window-function 'split-window-horizontally)
 ;;   ("b" balance-windows "balance windows" :exit t)
 ;;   )
 
+(setq backup-directory-alist
+    `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+    `((".*" ,temporary-file-directory t)))
 
 ;; workaround to get ediff to work!
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
@@ -244,6 +268,9 @@ ediff-split-window-function 'split-window-horizontally)
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
