@@ -87,6 +87,7 @@ ediff-split-window-function 'split-window-horizontally)
 
 ;; Make emacs behave sanely (overwrite selected text)
 (delete-selection-mode 1)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ;;;;;;;;;;;;;;;; Evil keys
 (helm-projectile-on)
@@ -240,8 +241,9 @@ ediff-split-window-function 'split-window-horizontally)
   ("b" helm-buffers-list "list buffers" :exit t)
   ("o" other-window "other window" :exit t)
   ("k" kill-this-buffer "kill this buffer" :exit t)
+  ("d" kill-this-buffer "kill this buffer" :exit t)
   ("w" exwm-workspace-switch "workspace-switch" :exit t)
-  )
+  ) 
 
 ;; Hydras don't work well with exwm
 ;; consider setting exwm-passthrough-something t 
