@@ -4,8 +4,6 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 (require 'company) 
-(require 'exwm)
-(require 'exwm-config)
 (require 'hydra)
 (require 'evil)
 (require 'projectile)
