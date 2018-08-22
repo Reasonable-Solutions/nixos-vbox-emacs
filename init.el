@@ -53,9 +53,6 @@
 (require 'eshell-git-prompt)
 (eshell-git-prompt-use-theme 'git-radar)
 
-(exwm-config-default)
-(exwm-input-set-key (kbd "s-p") #'helm-run-external-command)
-
 (which-key-mode t)
 ;; use fira code in 18
 ;; TODO replace with Pragmata Pro
@@ -256,7 +253,6 @@ ediff-split-window-function 'split-window-horizontally)
   ("o" other-window "other window" :exit t)
   ("k" kill-this-buffer "kill this buffer" :exit t)
   ("d" kill-this-buffer "kill this buffer" :exit t)
-  ("w" exwm-workspace-switch "workspace-switch" :exit t)
   ) 
 
 ;; Hydras don't work well with exwm
