@@ -7,6 +7,7 @@
 (require 'hydra)
 (require 'evil)
 (require 'projectile)
+(require 'haskell-mode)
 (require 'helm-projectile)
 (require 'helm-config)
 (require 'magit)
@@ -23,7 +24,22 @@
 (setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+(setq haskell-process-wrapper-function
+        (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args))) 
+
+(setq flycheck-command-wrapper-function
+        (lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command))
+      flycheck-executable-find
+        (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd))) 
 (add-to-list 'load-path "~/.emacs.d/lisp/") 
 
 ;; Melpa - only because git-timemachine is broken on nixos
