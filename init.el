@@ -3,7 +3,7 @@
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 (package-initialize)
-(require 'company) 
+(require 'company)
 (require 'hydra)
 (require 'evil)
 (require 'projectile)
@@ -16,7 +16,7 @@
 (require 'projectile)
 (require 'powerline)
 (powerline-default-theme)
-(require 'git-gutter) 
+(require 'git-gutter)
 (global-git-gutter-mode +1)
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
@@ -34,13 +34,13 @@
   :init (global-flycheck-mode))
 
 (setq haskell-process-wrapper-function
-        (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args))) 
+	(lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
 
 (setq flycheck-command-wrapper-function
-        (lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command))
+	(lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command))
       flycheck-executable-find
-        (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd))) 
-(add-to-list 'load-path "~/.emacs.d/lisp/") 
+	(lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd)))
+(add-to-list 'load-path "~/.emacs.d/lisp/")
 
 ;; Melpa - only because git-timemachine is broken on nixos
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
@@ -50,55 +50,33 @@
 :ensure t
 :defer t)
 
+(use-package material-theme
+:ensure t
+:defer t)
+
+
 (require 'eshell-git-prompt)
 (eshell-git-prompt-use-theme 'git-radar)
 
 (which-key-mode t)
-;; use fira code in 18
+
 ;; TODO replace with Pragmata Pro
-(setq default-frame-alist '((font . "Fira Code-12"))) 
+(setq default-frame-alist '((font . "iosevka-16")))
 
 
 (global-set-key (kbd "M-x") 'helm-M-x)
 (helm-mode 1)
-(evil-mode 1) 
-(projectile-mode +1) 
-(projectile-global-mode t) 
+(evil-mode 1)
+(projectile-mode +1)
+(projectile-global-mode t)
 ;; no toolbars
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
-(load-theme 'leuven t)
+(load-theme 'material-light t)
 (display-time)
 
-;; better defaults
-(setq visible-bell nil
-      inhibit-startup-message t
-      color-theme-is-global t
-      sentence-end-double-space nil
-      shift-select-mode nil
-      uniquify-buffer-name-style 'forward
-      whitespace-style '(face trailing lines-tail tabs)
-      whitespace-line-column 80
-      default-directory "~"
-      fill-column 80
-ediff-split-window-function 'split-window-horizontally)
-
-(defalias 'yes-or-no-p 'y-or-n-p)
-(defalias 'auto-tail-revert-mode 'tail-mode)
-
-(set-default 'indent-tabs-mode nil)
-(setq display-time-24hr-format t) 
-
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-
-;; Make emacs behave sanely (overwrite selected text)
-(delete-selection-mode 1)
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+;; better defaultsave-mode t)))
 
 ;;;;;;;;;;;;;;;; Evil keys
 (helm-projectile-on)
@@ -116,9 +94,9 @@ ediff-split-window-function 'split-window-horizontally)
   (backward-kill-sexp)
   (condition-case nil
       (prin1 (eval (read (current-kill 0)))
-             (current-buffer))
+	     (current-buffer))
     (error (message "Invalid expression")
-           (insert (current-kill 0)))))
+	   (insert (current-kill 0)))))
 
 
 (setq evil-normal-state-cursor   '("dodger blue" box)
@@ -145,12 +123,12 @@ ediff-split-window-function 'split-window-horizontally)
   "e" 'hydra-errors/body
   "x" 'hydra-eval-thing/body
   "r" 'hydra-helm-resume/body
-  ) 
+  )
 
 (defhydra hydra-apps ()
   "apps"
   ("d" dired "dired" :exit t)
-  ) 
+  )
 
 
 (defhydra hydra-narrow ()
@@ -197,7 +175,7 @@ ediff-split-window-function 'split-window-horizontally)
   ("k" projectile-kill-buffers "kill project buffers" :exit t)
   ("p" helm-projectile-switch-project "switch project" :exit t)
   ("s" helm-do-ag-project-root "ag project" :exit t)
-  ("w" helm-multi-swoop-project "ag project" :exit t)
+  ("w" helm-multi-swoop-projectile "ag project" :exit t)
   ("o" (find-file "~/todo/todo.org") "todo" :exit t)
   )
 
@@ -215,6 +193,7 @@ ediff-split-window-function 'split-window-horizontally)
   ("l" evil-window-right "window right" :exit t)
   ("-" evil-window-split "horizontal split" :exit t)
   ("/" evil-window-vsplit "vertical split" :exit t)
+  ("f" make-frame-command "make-frame-command" :exit t)
   )
 
 (defhydra hydra-magit ()
@@ -253,19 +232,7 @@ ediff-split-window-function 'split-window-horizontally)
   ("o" other-window "other window" :exit t)
   ("k" kill-this-buffer "kill this buffer" :exit t)
   ("d" kill-this-buffer "kill this buffer" :exit t)
-  ) 
-
-;; Hydras don't work well with exwm
-;; consider setting exwm-passthrough-something t 
-;; (defhydra hydra-exwm (global-map "s-l")
-;;   "exwm"
-;;   ("h" (exwm-layout-enlarge-window 10) "enlarge buffer")
-;;   ("j" (exwm-layout-enlarge-window-horizontally 10) "enlarge")
-;;   ("k" (exwm-layout-shrink-window-horizontally 10) "shrink")
-;;   ("l" (exwm-layout-shrink-window 10) "shrink")
-;;   ("t" exwm-layout-toggle-mode-line "toogle modeline" :exit t)
-;;   ("b" balance-windows "balance windows" :exit t)
-;;   )
+  )
 
 (setq backup-directory-alist
     `((".*" . ,temporary-file-directory)))
@@ -287,11 +254,12 @@ ediff-split-window-function 'split-window-horizontally)
       where)))
 
 (let* ((refmt-bin (or (reason-cmd-where "refmt ----where")
-                      (shell-cmd "which refmt")))
+		      (shell-cmd "which refmt")))
        (merlin-bin (or (reason-cmd-where "ocamlmerlin ----where")
-                       (shell-cmd "which ocamlmerlin")))
+		       (shell-cmd "which ocamlmerlin")))
        (merlin-base-dir (when merlin-bin
-                          (replace-regexp-in-string "bin/ocamlmerlin$" "" merlin-bin))))
+			  (replace-regexp-in-string "bin/ocamlmerlin$" "" merlin-bin))))
+
   ;; Add merlin.el to the emacs load path and tell emacs where to find ocamlmerlin
   (when merlin-bin
     (add-to-list 'load-path (concat merlin-base-dir "share/emacs/site-lisp/"))
@@ -303,31 +271,48 @@ ediff-split-window-function 'split-window-horizontally)
 (require 'reason-mode)
 (require 'merlin)
 (add-hook 'reason-mode-hook (lambda ()
-                              (add-hook 'before-save-hook 'refmt-before-save)
-                              (merlin-mode)))
+			      (add-hook 'before-save-hook 'refmt-before-save)
+			      (merlin-mode)))
 
 (setq merlin-ac-setup t)
 
+(add-hook 'before-save-hook 'whitespace-cleanup)
+
+(with-eval-after-load 'flycheck
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+
+(defun ielm-auto-complete ()
+  "Enables `auto-complete' support in \\[ielm]."
+  (setq ac-sources '(ac-source-functions
+		     ac-source-variables
+		     ac-source-features
+		     ac-source-symbols
+		     ac-source-words-in-same-mode-buffers))
+  (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)
+  (auto-complete-mode 1))
+(add-hook 'ielm-mode-hook 'ielm-auto-complete)
 
 ;; workaround to get ediff to work!
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-(set-background-color "grey90")
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" default)))
  '(package-selected-packages
    (quote
-    (git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
-           (add-to-list
-            (quote exec-path)
-            (concat
-             (locate-dominating-file default-directory ".dir-locals.el")
-             "node_modules/.bin/"))))))
+	   (add-to-list
+	    (quote exec-path)
+	    (concat
+	     (locate-dominating-file default-directory ".dir-locals.el")
+	     "node_modules/.bin/"))))))
  '(scss-compile-at-save nil))
 
 (custom-set-faces
