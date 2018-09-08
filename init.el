@@ -24,14 +24,14 @@
 (setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
+(use-package racket-mode)
+
 (use-package editorconfig
   :ensure t
   :config
   (editorconfig-mode 1))
 
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
+(require 'flycheck)
 
 (setq haskell-process-wrapper-function
 	(lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
@@ -67,6 +67,7 @@
 (global-set-key (kbd "M-x") 'helm-M-x)
 (helm-mode 1)
 (evil-mode 1)
+(evil-surround-mode 1)
 (projectile-mode +1)
 (projectile-global-mode t)
 ;; no toolbars
@@ -76,7 +77,41 @@
 (load-theme 'material-light t)
 (display-time)
 
+(setq visible-bell nil
+      inhibit-startup-message t
+      color-theme-is-global t
+      sentence-end-double-space nil
+      shift-select-mode nil
+      uniquify-buffer-name-style 'forward
+      whitespace-style '(face trailing lines-tail tabs)
+      whitespace-line-column 80
+      default-directory "~"
+      fill-column 80
+ediff-split-window-function 'split-window-horizontally)
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+(defalias 'auto-tail-revert-mode 'tail-mode)
+
+(set-default 'indent-tabs-mode nil)
+(setq display-time-24hr-format t)
+
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+
+;; Make emacs behave sanely (overwrite selected text)
+(delete-selection-mode 1)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+
+
 ;; better defaultsave-mode t)))
+
+(add-hook 'prog-mode-hook 'paredit-mode )
+(add-hook 'scss-mode-hook 'rainbow-mode)
+(add-hook 'prog-mode-hook 'flycheck-mode)
 
 ;;;;;;;;;;;;;;;; Evil keys
 (helm-projectile-on)
@@ -290,10 +325,10 @@
 		     ac-source-words-in-same-mode-buffers))
   (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)
   (auto-complete-mode 1))
+
+
 (add-hook 'ielm-mode-hook 'ielm-auto-complete)
 
-;; workaround to get ediff to work!
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
