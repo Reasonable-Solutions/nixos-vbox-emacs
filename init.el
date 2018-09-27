@@ -33,13 +33,23 @@
 
 (require 'flycheck)
 
-(setq haskell-process-wrapper-function
-	(lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
+;; (use-package outshine
+;;   :ensure t
+;;   :init
+;;   (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
+;;   (add-hook 'prog-mode-hook 'outline-minor-mode-hook)
+;;   )
 
-(setq flycheck-command-wrapper-function
-	(lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command))
-      flycheck-executable-find
-	(lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd)))
+
+(use-package dante
+  :ensure t
+  :after haskell-mode
+  :commands 'dante-mode
+  :init
+  (add-hook 'haskell-mode-hook 'dante-mode)
+  (add-hook 'haskell-mode-hook 'flycheck-mode)
+  )
+
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
 ;; Melpa - only because git-timemachine is broken on nixos
