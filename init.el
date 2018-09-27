@@ -347,17 +347,84 @@ ediff-split-window-function 'split-window-horizontally)
  '(custom-safe-themes
    (quote
     ("732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" default)))
+ '(dante-repl-command-line-methods-alist
+   (quote
+    ((styx .
+           #[257 "\300\301\302#\207"
+                 [dante-repl-by-file
+                  ("styx.yaml")
+                  ("styx" "repl" dante-target)]
+                 5 "
+
+(fn ROOT)"])
+     (nix .
+          #[257 "\300\301\302#\207"
+                [dante-repl-by-file
+                 ("shell.nix" "default.nix")
+                 ("nix-shell" "--pure" "--run"
+                  (concat "cabal new-repl "
+                          (or dante-target "")
+                          " --builddir=dist/dante"))]
+                5 "
+
+(fn ROOT)"])
+     (impure-nix .
+                 #[257 "\300\301\302#\207"
+                       [dante-repl-by-file
+                        ("shell.nix" "default.nix")
+                        ("nix-shell" "--run"
+                         (concat "cabal repl "
+                                 (or dante-target "")
+                                 " --builddir=dist/dante"))]
+                       5 "
+
+(fn ROOT)"])
+     (stack .
+            #[257 "\300\301\302#\207"
+                  [dante-repl-by-file
+                   ("stack.yaml")
+                   ("stack" "repl" dante-target)]
+                  5 "
+
+(fn ROOT)"])
+     (mafia .
+            #[257 "\300\301\302#\207"
+                  [dante-repl-by-file
+                   ("mafia")
+                   ("mafia" "repl" dante-target)]
+                  5 "
+
+(fn ROOT)"])
+     (new-build .
+                #[257 "\300\301\302#\204 \303\304!\205 \305\207"
+                      [directory-files nil ".+\\.cabal$" file-exists-p "cabal.project"
+                                       ("cabal" "new-repl" dante-target "--builddir=dist/dante")]
+                      5 "
+
+(fn ROOT)"])
+     (bare .
+           #[257 "\300\207"
+                 [("cabal" "repl" dante-target "--builddir=dist/dante")]
+                 2 "
+
+(fn _)"])
+     (bare-ghci .
+                #[257 "\300\207"
+                      [("ghci")]
+                      2 "
+
+(fn _)"]))))
  '(package-selected-packages
-   (quote
-    (darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
- '(safe-local-variable-values
-   (quote
-    ((eval progn
-	   (add-to-list
-	    (quote exec-path)
-	    (concat
-	     (locate-dominating-file default-directory ".dir-locals.el")
-	     "node_modules/.bin/"))))))
+(quote
+ (outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+'(safe-local-variable-values
+(quote
+ ((eval progn
+        (add-to-list
+         (quote exec-path)
+         (concat
+          (locate-dominating-file default-directory ".dir-locals.el")
+          "node_modules/.bin/"))))))
  '(scss-compile-at-save nil))
 
 (custom-set-faces
