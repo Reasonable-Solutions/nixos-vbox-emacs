@@ -15,7 +15,7 @@
 (require 'evil-magit)
 (require 'projectile)
 (require 'powerline)
-(powerline-default-theme)
+(powerline-center-evil-theme)
 (require 'git-gutter)
 (global-git-gutter-mode +1)
 (require 'uniquify)
@@ -77,7 +77,7 @@
 (global-set-key (kbd "M-x") 'helm-M-x)
 (helm-mode 1)
 (evil-mode 1)
-(evil-surround-mode 1)
+(global-evil-surround-mode 1)
 (projectile-mode +1)
 (projectile-global-mode t)
 ;; no toolbars
