@@ -3,6 +3,7 @@
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 (package-initialize)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (require 'company)
 (require 'hydra)
 (require 'evil)
@@ -12,7 +13,7 @@
 (require 'helm-config)
 (require 'magit)
 (require 'evil)
-(require 'evil-magit)
+(use-package evil-magit :ensure t)     ;; not in nix anymore??
 (require 'projectile)
 (require 'powerline)
 (powerline-center-evil-theme)
@@ -26,11 +27,21 @@
 
 (use-package racket-mode)
 
+(use-package google-this
+  :ensure t
+  :config
+  (google-this-mode 1))
+
+
 (use-package editorconfig
   :ensure t
   :config
   (editorconfig-mode 1))
 
+(require 'evil-lispy)
+;; make evil-lispy start in the modes you want
+(add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
+(add-hook 'racket-mode-hook #'evil-lispy-mode)
 (require 'flycheck)
 
 ;; (use-package outshine
@@ -39,7 +50,6 @@
 ;;   (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
 ;;   (add-hook 'prog-mode-hook 'outline-minor-mode-hook)
 ;;   )
-
 
 (use-package dante
   :ensure t
@@ -53,7 +63,6 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
 ;; Melpa - only because git-timemachine is broken on nixos
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 
 (require 'use-package)
 (use-package git-timemachine
@@ -64,22 +73,19 @@
 :ensure t
 :defer t)
 
-
 (require 'eshell-git-prompt)
 (eshell-git-prompt-use-theme 'git-radar)
 
 (which-key-mode t)
 
 ;; TODO replace with Pragmata Pro
-(setq default-frame-alist '((font . "iosevka-16")))
-
+(setq default-frame-alist '((font . "iosevka-12")))
 
 (global-set-key (kbd "M-x") 'helm-M-x)
 (helm-mode 1)
 (evil-mode 1)
 (global-evil-surround-mode 1)
 (projectile-mode +1)
-(projectile-global-mode t)
 ;; no toolbars
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -97,7 +103,7 @@
       whitespace-line-column 80
       default-directory "~"
       fill-column 80
-ediff-split-window-function 'split-window-horizontally)
+      ediff-split-window-function 'split-window-horizontally)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 (defalias 'auto-tail-revert-mode 'tail-mode)
@@ -338,7 +344,7 @@ ediff-split-window-function 'split-window-horizontally)
 
 
 (add-hook 'ielm-mode-hook 'ielm-auto-complete)
-
+(setq helm-ag-base-command "rg --vimgrep --no-heading")
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -414,18 +420,21 @@ ediff-split-window-function 'split-window-horizontally)
                       2 "
 
 (fn _)"]))))
+ '(ediff-window-setup-function (quote ediff-setup-windows-plain))
+ '(elnode-send-file-program "cat")
  '(package-selected-packages
-(quote
- (outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
-'(safe-local-variable-values
-(quote
- ((eval progn
-        (add-to-list
-         (quote exec-path)
-         (concat
-          (locate-dominating-file default-directory ".dir-locals.el")
-          "node_modules/.bin/"))))))
- '(scss-compile-at-save nil))
+   (quote
+    (google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+ '(safe-local-variable-values
+   (quote
+    ((eval progn
+           (add-to-list
+            (quote exec-path)
+            (concat
+             (locate-dominating-file default-directory ".dir-locals.el")
+             "node_modules/.bin/"))))))
+ '(scss-compile-at-save nil)
+ '(sgml-validate-command "tidy"))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
