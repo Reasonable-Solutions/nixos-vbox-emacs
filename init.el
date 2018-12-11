@@ -25,13 +25,34 @@
 (setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
+(use-package psc-ide
+  :ensure t
+  :init (add-hook 'purescript-mode-hook
+            (lambda ()
+              (psc-ide-mode)
+              (company-mode)
+              (flycheck-mode)
+              (turn-on-purescript-indentation))))
+
 (use-package racket-mode)
+
+(use-package vue-mode
+  :ensure t)
+
+(use-package command-log-mode
+  :ensure t)
 
 (use-package google-this
   :ensure t
   :config
   (google-this-mode 1))
 
+(use-package dhall-mode
+  :ensure t
+  :mode "\\.dhall\\'")
+
+(use-package fsharp-mode
+  :ensure t)
 
 (use-package editorconfig
   :ensure t
@@ -90,7 +111,7 @@
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
-(load-theme 'material-light t)
+(load-theme 'material t)
 (display-time)
 
 (setq visible-bell nil
@@ -232,7 +253,7 @@
 
 (defhydra hydra-jump ()
   "jump"
-  ("j" ace-jump-mode :exit t)
+  ("j" ace-jump-char-mode :exit t)
   )
 
 (defhydra hydra-window ()
@@ -247,15 +268,19 @@
   ("f" make-frame-command "make-frame-command" :exit t)
   )
 
-(defhydra hydra-magit ()
-  "magit"
+;;; the timemachine hydras should get some color
+;;; for better persistence??
+(defhydra hydra-magit (:color blue)
+  "git carl"
   ("s" magit-status "magit-status" :exit t)
   ("b" magit-blame "magit-blame" :exit t)
-  ("t" git-timemachine "git-timemachine")
-  ("n" git-timemachine-show-next-revision "git-timemachine next")
-  ("p" git-timemachine-show-previous-revision "git-timemachine prev")
+  ("t" git-timemachine "git-timemachine" :color pink)
+  ("n" git-timemachine-show-next-revision "git-timemachine next" :color pink)
+  ("p" git-timemachine-show-previous-revision "git-timemachine prev" :color pink)
   ("q" git-timemachine-quit "git-timemachine-quit")
   )
+
+
 
 (defhydra hydra-files ()
   "files"
@@ -424,7 +449,7 @@
  '(elnode-send-file-program "cat")
  '(package-selected-packages
    (quote
-    (google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
