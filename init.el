@@ -3,6 +3,7 @@
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 (package-initialize)
+;; All `require calls should be turned into use-package
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (require 'company)
 (require 'hydra)
@@ -35,6 +36,21 @@
               (turn-on-purescript-indentation))))
 
 (use-package racket-mode)
+(use-package yasnippet
+  :ensure t
+  :config
+  (use-package yasnippet-snippets
+    :ensure t)
+  (yas-global-mode t)
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  (define-key yas-minor-mode-map (kbd "C-'") #'yas-expand)
+  (yas-reload-all)
+  (setq yas-prompt-functions '(yas-ido-prompt))
+  (defun help/yas-after-exit-snippet-hook-fn ()
+    (prettify-symbols-mode)
+    (prettify-symbols-mode))
+  (add-hook 'yas-after-exit-snippet-hook #'help/yas-after-exit-snippet-hook-fn)
+  :diminish yas-minor-mode)
 
 (use-package vue-mode
   :ensure t)
