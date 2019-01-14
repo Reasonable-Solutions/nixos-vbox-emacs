@@ -58,10 +58,10 @@
 (use-package command-log-mode
   :ensure t)
 
-(use-package google-this
-  :ensure t
-  :config
-  (google-this-mode 1))
+(use-package proof-general
+  :ensure t)
+
+(add-hook 'dante-mode-hook '(lambda () (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint))))
 
 (use-package dhall-mode
   :ensure t
@@ -80,13 +80,6 @@
 (add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
 (add-hook 'racket-mode-hook #'evil-lispy-mode)
 (require 'flycheck)
-
-;; (use-package outshine
-;;   :ensure t
-;;   :init
-;;   (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
-;;   (add-hook 'prog-mode-hook 'outline-minor-mode-hook)
-;;   )
 
 (use-package dante
   :ensure t
@@ -264,7 +257,7 @@
   ("p" helm-projectile-switch-project "switch project" :exit t)
   ("s" helm-do-ag-project-root "ag project" :exit t)
   ("w" helm-multi-swoop-projectile "ag project" :exit t)
-  ("o" (find-file "~/todo/todo.org") "todo" :exit t)
+  ("o" (find-file "~/todo.org") "todo" :exit t)
   )
 
 (defhydra hydra-jump ()
@@ -349,7 +342,10 @@
 
 
 (add-hook 'ielm-mode-hook 'ielm-auto-complete)
+
 (setq helm-ag-base-command "rg --vimgrep --no-heading")
+(setq org-tree-slide-slide-in-effect nil)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -425,11 +421,14 @@
                       2 "
 
 (fn _)"]))))
+ '(dhall-format-at-save t)
+ '(dhall-format-command "dhall format")
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(elnode-send-file-program "cat")
+ '(org-agenda-files (quote ("~/todo.org")))
  '(package-selected-packages
    (quote
-    (command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
