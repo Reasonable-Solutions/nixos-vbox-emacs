@@ -26,6 +26,9 @@
 (setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
+(add-to-list 'load-path "/nix/store/r4knkxhd1n0vz25533wrq7wy62q74qwh-merlin-3.1.0/share/emacs/site-lisp/")
+(require 'merlin)
+
 (use-package psc-ide
   :ensure t
   :init (add-hook 'purescript-mode-hook
@@ -36,6 +39,14 @@
               (turn-on-purescript-indentation))))
 
 (use-package racket-mode)
+
+(use-package prettier-js
+  :ensure t
+  :init (add-hook 'rjsx-mode-hook 'prettier-js-mode))
+
+
+(add-hook 'javascript-mode-hook 'prettier-js-mode)
+
 (use-package yasnippet
   :ensure t
   :config
@@ -120,7 +131,7 @@
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
-(load-theme 'material t)
+(load-theme 'material-light t)
 (display-time)
 
 (setq visible-bell nil
@@ -152,6 +163,43 @@
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 
+;;----------------------------------------------------------------------------
+;; Reason setup
+;----------------------------------------------------------------------------
+
+(defun shell-cmd (cmd)
+  "Returns the stdout output of a shell command or nil if the command returned
+   an error"
+  (car (ignore-errors (apply 'process-lines (split-string cmd)))))
+
+(defun reason-cmd-where (cmd)
+  (let ((where (shell-cmd cmd)))
+    (if (not (string-equal "unknown flag ----where" where))
+      where)))
+
+(let* ((refmt-bin (or (reason-cmd-where "refmt ----where")
+                      (shell-cmd "which refmt")))
+       (merlin-bin (or (reason-cmd-where "ocamlmerlin ----where")
+                       (shell-cmd "which ocamlmerlin")))
+       (merlin-base-dir (when merlin-bin
+                          (replace-regexp-in-string "bin/ocamlmerlin$" "" merlin-bin))))
+  ;; Add merlin.el to the emacs load path and tell emacs where to find ocamlmerlin
+  (when merlin-bin
+    (add-to-list 'load-path (concat
+                             merlin-base-dir
+                             "/nix/store/n0n0pkfxwiwqgxj47mz5q7l3hzd1l81l-merlin-3.1.0/share/emacs/site-lisp"))
+    (setq merlin-command merlin-bin))
+
+  (when refmt-bin
+    (setq refmt-command refmt-bin)))
+
+(require 'reason-mode)
+(require 'merlin)
+(add-hook 'reason-mode-hook (lambda ()
+                              (add-hook 'before-save-hook 'refmt-before-save)
+                              (merlin-mode)))
+
+(setq merlin-ac-setup t)
 
 ;; better defaultsave-mode t)))
 
@@ -428,7 +476,7 @@
  '(org-agenda-files (quote ("~/todo.org")))
  '(package-selected-packages
    (quote
-    (yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
