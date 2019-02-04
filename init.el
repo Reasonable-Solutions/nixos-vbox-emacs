@@ -26,9 +26,6 @@
 (setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
-(add-to-list 'load-path "/nix/store/r4knkxhd1n0vz25533wrq7wy62q74qwh-merlin-3.1.0/share/emacs/site-lisp/")
-(require 'merlin)
-
 (use-package psc-ide
   :ensure t
   :init (add-hook 'purescript-mode-hook
@@ -39,6 +36,8 @@
               (turn-on-purescript-indentation))))
 
 (use-package racket-mode)
+
+(use-package evil-goggles :config (evil-goggles-mode) :ensure t)
 
 (use-package prettier-js
   :ensure t
@@ -160,8 +159,20 @@
 
 ;; Make emacs behave sanely (overwrite selected text)
 (delete-selection-mode 1)
+
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
+;; Theme custom stuff
+(custom-theme-set-faces
+ 'brutalist
+ '(haskell-type-face ((t (:height 1.05 :weight semi-bold))))
+ '(helm-selection-line ((t (:weight bold :underline t))))
+ '(helm-match ((t (:weight bold :underline t))))
+ '(helm-grep-match ((t (:weight bold :underline t))))
+ '(font-lock-comment-face ((t (:inherit t :foreground "medium sea green" :slant italic))))
+ '(font-lock-doc-face ((t (:inherit t :foreground "medium sea green" :slant italic))))
+ '(helm-selection ((t (:weight bold :height 1.2 :background "lightyellow"))))
+ '(haskell-constructor-face ((t (:inherit t)))))
 
 ;;----------------------------------------------------------------------------
 ;; Reason setup
@@ -177,6 +188,7 @@
     (if (not (string-equal "unknown flag ----where" where))
       where)))
 
+;; put envs here
 (let* ((refmt-bin (or (reason-cmd-where "refmt ----where")
                       (shell-cmd "which refmt")))
        (merlin-bin (or (reason-cmd-where "ocamlmerlin ----where")
@@ -184,6 +196,7 @@
        (merlin-base-dir (when merlin-bin
                           (replace-regexp-in-string "bin/ocamlmerlin$" "" merlin-bin))))
   ;; Add merlin.el to the emacs load path and tell emacs where to find ocamlmerlin
+  ;; This should be done through a set of env i set in a nix file
   (when merlin-bin
     (add-to-list 'load-path (concat
                              merlin-base-dir
@@ -476,7 +489,7 @@
  '(org-agenda-files (quote ("~/todo.org")))
  '(package-selected-packages
    (quote
-    (brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
