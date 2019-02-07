@@ -5,20 +5,19 @@
 (package-initialize)
 ;; All `require calls should be turned into use-package
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-(require 'company)
-(require 'hydra)
-(require 'evil)
-(require 'projectile)
-(require 'haskell-mode)
-(require 'helm-projectile)
-(require 'helm-config)
-(require 'magit)
-(require 'evil)
+(use-package company :ensure t)
+(use-package hydra :ensure t)
+(use-package evil :ensure t)
+(use-package projectile :ensure t)
+(use-package haskell-mode :ensure t)
+(use-package helm-projectile :ensure t)
+(use-package magit :ensure t)
+(use-package evil :ensure t)
 (use-package evil-magit :ensure t)     ;; not in nix anymore??
-(require 'projectile)
-(require 'powerline)
+(use-package projectile :ensure t)
+(use-package powerline :ensure t)
 (powerline-center-evil-theme)
-(require 'git-gutter)
+(use-package git-gutter :ensure t)
 (global-git-gutter-mode +1)
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
@@ -85,11 +84,11 @@
   :config
   (editorconfig-mode 1))
 
-(require 'evil-lispy)
+(use-package evil-lispy :ensure t)
 ;; make evil-lispy start in the modes you want
 (add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
 (add-hook 'racket-mode-hook #'evil-lispy-mode)
-(require 'flycheck)
+(use-package flycheck :ensure t)
 
 (use-package dante
   :ensure t
