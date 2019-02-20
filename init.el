@@ -169,7 +169,7 @@
  '(helm-match ((t (:weight bold :underline t))))
  '(helm-grep-match ((t (:weight bold :underline t))))
  '(font-lock-comment-face ((t (:inherit t :foreground "medium sea green" :slant italic))))
- '(font-lock-doc-face ((t (:inherit t :foreground "medium sea green" :slant italic))))
+ '(font-lock-doc-face ((t (:inherit t :foreground "dark violet" :slant italic))))
  '(helm-selection ((t (:weight bold :height 1.2 :background "lightyellow"))))
  '(dired-flagged ((t (:weight bold :height 1.2 :background "tomato2"))))
  '(haskell-constructor-face ((t (:inherit t)))))
