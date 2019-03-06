@@ -25,6 +25,8 @@
 (setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
+(use-package hyperbole :ensure t)
+
 (use-package psc-ide
   :ensure t
   :init (add-hook 'purescript-mode-hook
@@ -35,6 +37,10 @@
               (turn-on-purescript-indentation))))
 
 (use-package racket-mode)
+
+ ;; (add-to-list 'display-buffer-alist
+ ;;               '("^\\*Help\\*$" display-buffer-reuse-window
+ ;;                 (reusable-frames . visible)))
 
 (use-package evil-goggles :config (evil-goggles-mode) :ensure t)
 
@@ -165,14 +171,18 @@
 (custom-theme-set-faces
  'brutalist
  '(haskell-type-face ((t (:height 1.05 :weight semi-bold))))
+ '(haskell-keyword-face ((t (:height 1.05 :weight light))))
  '(helm-selection-line ((t (:weight bold :underline t))))
  '(helm-match ((t (:weight bold :underline t))))
  '(helm-grep-match ((t (:weight bold :underline t))))
  '(font-lock-comment-face ((t (:inherit t :foreground "medium sea green" :slant italic))))
  '(font-lock-doc-face ((t (:inherit t :foreground "dark violet" :slant italic))))
+ '(flycheck-info ((t (:underline '(:color "red2" :style wave)))))
+ '(flycheck-error ((t (:underline '(:color "red2" :style wave)))))
  '(helm-selection ((t (:weight bold :height 1.2 :background "lightyellow"))))
  '(dired-flagged ((t (:weight bold :height 1.2 :background "tomato2"))))
  '(haskell-constructor-face ((t (:inherit t)))))
+
 
 ;;----------------------------------------------------------------------------
 ;; Reason setup
@@ -302,7 +312,7 @@
   )
 
 (defhydra hydra-errors ()
-  "projectile"
+  "errors"
   ("p" flycheck-previous-error "previous error" )
   ("P" flycheck-next-error "nect error")
   ("n" flycheck-next-error "next error")
@@ -489,7 +499,7 @@
  '(org-agenda-files (quote ("~/todo.org")))
  '(package-selected-packages
    (quote
-    (handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
