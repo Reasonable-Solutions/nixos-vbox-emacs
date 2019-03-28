@@ -11,13 +11,18 @@
 (use-package projectile :ensure t)
 (use-package haskell-mode :ensure t)
 (use-package helm-projectile :ensure t)
-(use-package magit :ensure t)
+(use-package magit
+  :bind (("C-k" . git-rebase-move-line-up) ("C-j" . git-rebase-move-line-down))
+  :ensure t)
 (use-package evil :ensure t)
 (use-package evil-magit :ensure t)     ;; not in nix anymore??
 (use-package projectile :ensure t)
-(use-package powerline :ensure t)
-(powerline-center-evil-theme)
 (use-package git-gutter :ensure t)
+(use-package evil :ensure t)
+(use-package evil-magit :ensure t)     ;; not in nix anymore??
+(use-package projectile :ensure t)
+(use-package git-gutter :ensure t)
+(use-package purescript-mode :ensure t :defer t)
 (global-git-gutter-mode +1)
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
@@ -181,8 +186,11 @@
  '(flycheck-error ((t (:underline '(:color "red2" :style wave)))))
  '(helm-selection ((t (:weight bold :height 1.2 :background "lightyellow"))))
  '(dired-flagged ((t (:weight bold :height 1.2 :background "tomato2"))))
+ '(mode-line-inactive ((t (:foreground "light steel blue"))))
+ '(mode-line ((t (:foreground "slate blue" :background "ivory" :border "navy"))))
  '(haskell-constructor-face ((t (:inherit t)))))
 
+;;; add mode-line-compaction
 
 ;;----------------------------------------------------------------------------
 ;; Reason setup
@@ -499,7 +507,7 @@
  '(org-agenda-files (quote ("~/todo.org")))
  '(package-selected-packages
    (quote
-    (hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (purescript-mode hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
