@@ -31,8 +31,6 @@
 (setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
-(use-package hyperbole :ensure t)
-
 (use-package psc-ide
   :ensure t
   :init (add-hook 'purescript-mode-hook
