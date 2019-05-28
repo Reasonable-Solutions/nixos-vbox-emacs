@@ -238,9 +238,8 @@
 (helm-projectile-on)
 
 (add-hook 'after-init-hook 'global-company-mode)
-
 (global-evil-leader-mode)
-(evil-leader/set-leader "<SPC>")
+(evil-leader/set-leader "r")
 
 (evil-escape-mode 1)
 
@@ -265,7 +264,7 @@
 
 (evil-leader/set-key
   "f" 'hydra-files/body
-  "<SPC>" 'helm-M-x
+  "r" 'helm-M-x
   "<DEL>" 'helm-M-x
   "g" 'hydra-magit/body
   "v" 'hydra-expand-region/body
@@ -278,7 +277,7 @@
   "w" 'hydra-window/body
   "e" 'hydra-errors/body
   "x" 'hydra-eval-thing/body
-  "r" 'hydra-helm-resume/body
+  "t" 'hydra-helm-resume/body
   )
 
 (defhydra hydra-apps ()
