@@ -239,7 +239,7 @@
 
 (add-hook 'after-init-hook 'global-company-mode)
 (global-evil-leader-mode)
-(evil-leader/set-leader "r")
+(evil-leader/set-leader "=")
 
 (evil-escape-mode 1)
 
