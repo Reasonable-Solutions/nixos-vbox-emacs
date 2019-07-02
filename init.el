@@ -15,6 +15,28 @@
 (use-package magit
   :bind (("C-k" . git-rebase-move-line-up) ("C-j" . git-rebase-move-line-down))
   :ensure t)
+;; lsp
+;; flymake litters Foo_flymake.hs files everywhere. Make it stop
+
+(setq flymake-run-in-place nil)
+  (use-package lsp-mode
+    :commands lsp)
+
+  (use-package lsp-ui
+    :commands lsp-ui-mode)
+
+  (use-package company-lsp
+    :commands company-lsp)
+
+  (use-package lsp-haskell
+    :hook ((haskell-mode) .
+	   (lambda ()
+	     (require 'lsp-haskell)
+	     (lsp)))
+    :config (setq lsp-haskell-process-path-hie "hie-wrapper")
+    :defer t)
+
+;; /lsp
 (use-package evil :ensure t)
 (use-package evil-magit :ensure t)     ;; not in nix anymore??
 (use-package projectile :ensure t)
@@ -77,8 +99,6 @@
 (use-package command-log-mode
   :ensure t)
 
-(add-hook 'dante-mode-hook '(lambda () (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint))))
-
 (use-package dhall-mode
   :ensure t
   :mode "\\.dhall\\'")
@@ -96,15 +116,6 @@
 (add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
 (add-hook 'racket-mode-hook #'evil-lispy-mode)
 (use-package flycheck :ensure t)
-
-(use-package dante
-  :ensure t
-  :after haskell-mode
-  :commands 'dante-mode
-  :init
-  (add-hook 'haskell-mode-hook 'dante-mode)
-  (add-hook 'haskell-mode-hook 'flycheck-mode)
-  )
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
@@ -124,7 +135,6 @@
 
 (which-key-mode t)
 
-;; TODO replace with Pragmata Pro
 (setq default-frame-alist '((font . "iosevka-12")))
 
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -184,7 +194,14 @@
  '(dired-flagged ((t (:weight bold :height 1.2 :background "tomato2"))))
  '(mode-line-inactive ((t (:foreground "light steel blue"))))
  '(mode-line ((t (:foreground "slate blue" :background "ivory" :border "navy"))))
- '(haskell-constructor-face ((t (:inherit t)))))
+ '(haskell-constructor-face ((t (:inherit t))))
+ '(lsp-ui-sideline-symbol ((t (:inherit t :height 0.8))))
+ '(lsp-ui-sideline-current-symbol ((t (:inherit t :height 0.8))))
+ '(lsp-ui-sideline-code-action ((t (:inherit t :foreground "dark violet"))))
+ '(lsp-ui-sideline-symbol-info ((t (:inherit t :height 0.8))))
+ '(lsp-ui-sideline-global ((t (:inherit t :height 0.8))))
+ '(markdown-code-face ((t (:inherit iosevka))))
+ )
 
 ;;; add mode-line-compaction
 
@@ -363,8 +380,6 @@
   ("q" git-timemachine-quit "git-timemachine-quit")
   )
 
-
-
 (defhydra hydra-files ()
   "files"
   ("f" helm-find-files "find files" :exit t)
@@ -502,7 +517,7 @@
  '(org-agenda-files (quote ("~/todo.org")))
  '(package-selected-packages
    (quote
-    (purescript-mode hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (company-lsp lsp-ui lsp-haskell purescript-mode hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
