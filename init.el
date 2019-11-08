@@ -71,6 +71,12 @@
 (use-package circe)
 (use-package hyperbole :ensure t)
 
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
 (setq circe-network-options
       '(("IRCCloud"
          :host "bnc.irccloud.com"
@@ -78,7 +84,7 @@
          :port 6697
          :tls t
          :nick "Wapr"
-         :pass "***REMOVED***"
+         :pass  (get-string-from-file "bnc-pass")
          :channels ("#nixos", "#haskell", "#hackeriet"))))
 
 ;; lsp

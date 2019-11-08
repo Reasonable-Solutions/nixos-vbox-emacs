@@ -8,6 +8,7 @@ auto-save-list
 tramp
 .\#*
 
+#ignore eshell
 eshell/
 
 # Org-mode
@@ -46,3 +47,5 @@ flycheck_*.el
 
 # directory configuration
 .dir-locals.el
+/bnc-pass
+transient
