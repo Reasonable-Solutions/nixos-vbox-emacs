@@ -5,19 +5,84 @@
 (package-initialize)
 ;; All `require calls should be turned into use-package
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-(use-package company :ensure t)
-(use-package hydra :ensure t)
-(use-package direnv :ensure t)
-(use-package evil :ensure t)
-(use-package projectile :ensure t)
-(use-package haskell-mode :ensure t)
-(use-package helm-projectile :ensure t)
-(use-package magit
-  :bind (("C-k" . git-rebase-move-line-up) ("C-j" . git-rebase-move-line-down))
-  :ensure t)
+(use-package company)
+(use-package hydra)
+(use-package direnv)
+(use-package projectile)
+(use-package haskell-mode)
+(use-package helm-projectile)
+
+(use-package evil
+  :init
+  (progn
+    (evil-mode 1)
+    (use-package evil-leader
+      :init (global-evil-leader-mode)
+      :config
+      (progn
+        (evil-leader/set-leader "SPC")))
+    (use-package evil-magit
+      :config
+      (progn
+        (evil-leader/set-key "gs" 'magit-status)))
+    (use-package evil-org
+      :ensure t
+      :init (add-hook 'org-mode-hook 'evil-org-mode))
+    (use-package evil-cleverparens
+      :ensure t
+      :init   (add-hook 'paredit-mode-hook 'evil-cleverparens-mode)
+      :config (setq evil-cleverparens-swap-move-by-word-and-symbol t))
+    (use-package evil-surround
+      :ensure t
+      :config
+      (progn
+        (global-evil-surround-mode 1)
+        (add-to-list 'evil-surround-operator-alist '(evil-cp-change . change))
+        (add-to-list 'evil-surround-operator-alist '(evil-cp-delete . delete)))))
+  :config
+  (progn
+    (setq evil-cross-lines t)
+    (setq evil-move-cursor-back nil)))
+
+(defun eshell-here ()
+  (interactive)
+  (let* ((parent (projectile-project-root))
+         (height (/ (window-total-height) 3))
+         (name   (car (last (split-string parent "/" t)))))
+    (split-window-vertically (- height))
+    (other-window 1)
+    (eshell "new")
+    (rename-buffer (concat "*eshell: " name "*"))
+    (insert (concat "cd " parent))
+    (eshell-send-input)))
+
+(evil-leader/set-key "sh" 'eshell-here)
+
+(use-package doom-modeline
+      :hook (after-init . doom-modeline-mode))
+
+(use-package doom-themes
+  :init
+  (load-theme 'doom-nord-light t)
+  :config
+  (progn
+    (doom-themes-org-config)))
+
+(use-package circe)
+(use-package hyperbole :ensure t)
+
+(setq circe-network-options
+      '(("IRCCloud"
+         :host "bnc.irccloud.com"
+         :server-buffer-name "irccloud"
+         :port 6697
+         :tls t
+         :nick "Wapr"
+         :pass "***REMOVED***"
+         :channels ("#nixos", "#haskell", "#hackeriet"))))
+
 ;; lsp
 ;; flymake litters Foo_flymake.hs files everywhere. Make it stop
-
 (setq flymake-run-in-place nil)
   (use-package lsp-mode
     :commands lsp)
@@ -37,14 +102,8 @@
     :defer t)
 
 ;; /lsp
-(use-package evil :ensure t)
-(use-package evil-magit :ensure t)     ;; not in nix anymore??
-(use-package projectile :ensure t)
 (use-package git-gutter :ensure t)
 (use-package evil :ensure t)
-(use-package evil-magit :ensure t)     ;; not in nix anymore??
-(use-package projectile :ensure t)
-(use-package git-gutter :ensure t)
 (use-package purescript-mode :ensure t :defer t)
 (global-git-gutter-mode +1)
 (require 'uniquify)
@@ -93,9 +152,6 @@
   (add-hook 'yas-after-exit-snippet-hook #'help/yas-after-exit-snippet-hook-fn)
   :diminish yas-minor-mode)
 
-(use-package vue-mode
-  :ensure t)
-
 (use-package command-log-mode
   :ensure t)
 
@@ -103,17 +159,12 @@
   :ensure t
   :mode "\\.dhall\\'")
 
-(use-package fsharp-mode
-  :ensure t)
-
 (use-package editorconfig
   :ensure t
   :config
   (editorconfig-mode 1))
 
-(use-package evil-lispy :ensure t)
 ;; make evil-lispy start in the modes you want
-(add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
 (add-hook 'racket-mode-hook #'evil-lispy-mode)
 (use-package flycheck :ensure t)
 
@@ -121,12 +172,7 @@
 
 ;; Melpa - only because git-timemachine is broken on nixos
 
-(require 'use-package)
 (use-package git-timemachine
-:ensure t
-:defer t)
-
-(use-package brutalist-theme
 :ensure t
 :defer t)
 
@@ -135,7 +181,7 @@
 
 (which-key-mode t)
 
-(setq default-frame-alist '((font . "iosevka-12")))
+(setq default-frame-alist '((font . "iosevka-10")))
 
 (global-set-key (kbd "M-x") 'helm-M-x)
 (helm-mode 1)
@@ -146,7 +192,6 @@
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
-(load-theme 'brutalist t)
 (display-time)
 
 (setq visible-bell nil
@@ -179,79 +224,13 @@
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ;; Theme custom stuff
-(custom-theme-set-faces
- 'brutalist
- '(haskell-type-face ((t (:height 1.05 :weight semi-bold))))
- '(haskell-keyword-face ((t (:height 1.05 :weight light))))
- '(helm-selection-line ((t (:weight bold :underline t))))
- '(helm-match ((t (:weight bold :underline t))))
- '(helm-grep-match ((t (:weight bold :underline t))))
- '(font-lock-comment-face ((t (:inherit t :foreground "medium sea green" :slant italic))))
- '(font-lock-doc-face ((t (:inherit t :foreground "dark violet" :slant italic))))
- '(flycheck-info ((t (:underline '(:color "red2" :style wave)))))
- '(flycheck-error ((t (:underline '(:color "red2" :style wave)))))
- '(helm-selection ((t (:weight bold :height 1.2 :background "lightyellow"))))
- '(dired-flagged ((t (:weight bold :height 1.2 :background "tomato2"))))
- '(mode-line-inactive ((t (:foreground "light steel blue"))))
- '(mode-line ((t (:foreground "slate blue" :background "ivory" :border "navy"))))
- '(haskell-constructor-face ((t (:inherit t))))
- '(lsp-ui-sideline-symbol ((t (:inherit t :height 0.8))))
- '(lsp-ui-sideline-current-symbol ((t (:inherit t :height 0.8))))
- '(lsp-ui-sideline-code-action ((t (:inherit t :foreground "dark violet"))))
- '(lsp-ui-sideline-symbol-info ((t (:inherit t :height 0.8))))
- '(lsp-ui-sideline-global ((t (:inherit t :height 0.8))))
- '(markdown-code-face ((t (:inherit iosevka))))
- )
-
 ;;; add mode-line-compaction
-
-;;----------------------------------------------------------------------------
-;; Reason setup
-;----------------------------------------------------------------------------
-
-(defun shell-cmd (cmd)
-  "Returns the stdout output of a shell command or nil if the command returned
-   an error"
-  (car (ignore-errors (apply 'process-lines (split-string cmd)))))
-
-(defun reason-cmd-where (cmd)
-  (let ((where (shell-cmd cmd)))
-    (if (not (string-equal "unknown flag ----where" where))
-      where)))
-
-;; put envs here
-(let* ((refmt-bin (or (reason-cmd-where "refmt ----where")
-                      (shell-cmd "which refmt")))
-       (merlin-bin (or (reason-cmd-where "ocamlmerlin ----where")
-                       (shell-cmd "which ocamlmerlin")))
-       (merlin-base-dir (when merlin-bin
-                          (replace-regexp-in-string "bin/ocamlmerlin$" "" merlin-bin))))
-  ;; Add merlin.el to the emacs load path and tell emacs where to find ocamlmerlin
-  ;; This should be done through a set of env i set in a nix file
-  (when merlin-bin
-    (add-to-list 'load-path (concat
-                             merlin-base-dir
-                             "/nix/store/n0n0pkfxwiwqgxj47mz5q7l3hzd1l81l-merlin-3.1.0/share/emacs/site-lisp"))
-    (setq merlin-command merlin-bin))
-
-  (when refmt-bin
-    (setq refmt-command refmt-bin)))
-
-(require 'reason-mode)
-(require 'merlin)
-(add-hook 'reason-mode-hook (lambda ()
-                              (add-hook 'before-save-hook 'refmt-before-save)
-                              (merlin-mode)))
-
-(setq merlin-ac-setup t)
-
 ;; better defaultsave-mode t)))
 
 (add-hook 'prog-mode-hook 'paredit-mode )
 (add-hook 'scss-mode-hook 'rainbow-mode)
 (add-hook 'prog-mode-hook 'flycheck-mode)
 
-;;;;;;;;;;;;;;;; Evil keys
 (helm-projectile-on)
 
 (add-hook 'after-init-hook 'global-company-mode)
@@ -302,7 +281,6 @@
   ("d" dired "dired" :exit t)
   )
 
-
 (defhydra hydra-narrow ()
   "projectile"
   ("d" narrow-to-defun "narrow-to-defun")
@@ -316,7 +294,6 @@
   ("y" helm-show-kill-ring "helm-show-kill-ring" :exit t)
   ("l" helm-resume "helm-resume" :exit t)
   )
-
 
 (defhydra hydra-search ()
   "projectile"
@@ -373,7 +350,7 @@
 (defhydra hydra-magit (:color blue)
   "git carl"
   ("s" magit-status "magit-status" :exit t)
-  ("b" magit-blame "magit-blame" :exit t)
+  ("b" magit-blame-addition "magit-blame" :exit t)
   ("t" git-timemachine "git-timemachine" :color pink)
   ("n" git-timemachine-show-next-revision "git-timemachine next" :color pink)
   ("p" git-timemachine-show-previous-revision "git-timemachine prev" :color pink)
@@ -429,7 +406,6 @@
   (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)
   (auto-complete-mode 1))
 
-
 (add-hook 'ielm-mode-hook 'ielm-auto-complete)
 
 (setq helm-ag-base-command "rg --vimgrep --no-heading")
@@ -443,73 +419,6 @@
  '(custom-safe-themes
    (quote
     ("de1f10725856538a8c373b3a314d41b450b8eba21d653c4a4498d52bb801ecd2" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" default)))
- '(dante-repl-command-line-methods-alist
-   (quote
-    ((styx .
-           #[257 "\300\301\302#\207"
-                 [dante-repl-by-file
-                  ("styx.yaml")
-                  ("styx" "repl" dante-target)]
-                 5 "
-
-(fn ROOT)"])
-     (nix .
-          #[257 "\300\301\302#\207"
-                [dante-repl-by-file
-                 ("shell.nix" "default.nix")
-                 ("nix-shell" "--pure" "--run"
-                  (concat "cabal new-repl "
-                          (or dante-target "")
-                          " --builddir=dist/dante"))]
-                5 "
-
-(fn ROOT)"])
-     (impure-nix .
-                 #[257 "\300\301\302#\207"
-                       [dante-repl-by-file
-                        ("shell.nix" "default.nix")
-                        ("nix-shell" "--run"
-                         (concat "cabal repl "
-                                 (or dante-target "")
-                                 " --builddir=dist/dante"))]
-                       5 "
-
-(fn ROOT)"])
-     (stack .
-            #[257 "\300\301\302#\207"
-                  [dante-repl-by-file
-                   ("stack.yaml")
-                   ("stack" "repl" dante-target)]
-                  5 "
-
-(fn ROOT)"])
-     (mafia .
-            #[257 "\300\301\302#\207"
-                  [dante-repl-by-file
-                   ("mafia")
-                   ("mafia" "repl" dante-target)]
-                  5 "
-
-(fn ROOT)"])
-     (new-build .
-                #[257 "\300\301\302#\204 \303\304!\205 \305\207"
-                      [directory-files nil ".+\\.cabal$" file-exists-p "cabal.project"
-                                       ("cabal" "new-repl" dante-target "--builddir=dist/dante")]
-                      5 "
-
-(fn ROOT)"])
-     (bare .
-           #[257 "\300\207"
-                 [("cabal" "repl" dante-target "--builddir=dist/dante")]
-                 2 "
-
-(fn _)"])
-     (bare-ghci .
-                #[257 "\300\207"
-                      [("ghci")]
-                      2 "
-
-(fn _)"]))))
  '(dhall-format-at-save t)
  '(dhall-format-command "dhall format")
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
