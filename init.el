@@ -7,10 +7,66 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (use-package company)
 (use-package hydra)
-(use-package direnv)
+(use-package direnv :ensure t)
 (use-package projectile)
-(use-package haskell-mode)
-(use-package helm-projectile)
+(use-package smex :ensure t)
+
+(use-package expand-region :ensure t
+  :init (  global-set-key (kbd "C-=") 'er/expand-region))
+
+(use-package multiple-cursors :ensure t)
+
+(use-package matcha
+  :load-path "~/.emacs.d/matcha/"
+  :ensure nil
+  :config
+  (matcha-setup))
+
+(use-package general
+  :ensure t
+  :init
+  (setq general-override-states '(insert
+                                  emacs
+                                  hybrid
+                                  normal
+                                  visual
+                                  motion
+                                  operator
+                                  replace))
+  (general-define-key
+   :states '(normal visual motion)
+   :keymaps 'override
+   "SPC" 'matcha-me-space))
+
+(use-package counsel-projectile
+  :after projectile
+  :ensure t
+  :config
+  (counsel-projectile-mode))
+
+(use-package ivy
+  :defer 0.1
+  :diminish
+  :bind (("C-c C-r" . ivy-resume)
+         ("C-x B" . ivy-switch-buffer-other-window))
+  :custom
+  (ivy-count-format "(%d/%d) ")
+  (ivy-use-virtual-buffers t)
+  :config (ivy-mode))
+
+(use-package ivy-rich
+  :after ivy
+  (ivy-virtual-abbreviate 'full
+                          ivy-rich-switch-buffer-align-virtual-buffer t
+                          ivy-rich-path-style 'abbrev)
+  :config
+  (ivy-set-display-transformer 'ivy-switch-buffer
+                               'ivy-rich-switch-buffer-transformer))
+
+(use-package swiper
+  :after ivy
+  :bind (("C-s" . swiper)
+         ("C-r" . swiper)))
 
 (use-package evil
   :init
@@ -63,13 +119,12 @@
 
 (use-package doom-themes
   :init
-  (load-theme 'doom-nord-light t)
+  (load-theme 'leuven t)
   :config
   (progn
     (doom-themes-org-config)))
 
 (use-package circe)
-(use-package hyperbole :ensure t)
 
 (defun get-string-from-file (filePath)
   "Return filePath's file content."
@@ -87,29 +142,12 @@
          :pass  (get-string-from-file "bnc-pass")
          :channels ("#nixos", "#haskell", "#hackeriet"))))
 
-;; lsp
-;; flymake litters Foo_flymake.hs files everywhere. Make it stop
-(setq flymake-run-in-place nil)
-  (use-package lsp-mode
-    :commands lsp)
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+(setq haskell-process-type 'cabal-repl)
 
-  (use-package lsp-ui
-    :commands lsp-ui-mode)
-
-  (use-package company-lsp
-    :commands company-lsp)
-
-  (use-package lsp-haskell
-    :hook ((haskell-mode) .
-	   (lambda ()
-	     (require 'lsp-haskell)
-	     (lsp)))
-    :config (setq lsp-haskell-process-path-hie "hie-wrapper")
-    :defer t)
-
-;; /lsp
 (use-package git-gutter :ensure t)
 (use-package evil :ensure t)
+(use-package wgrep :ensure t)
 (use-package purescript-mode :ensure t :defer t)
 (global-git-gutter-mode +1)
 (require 'uniquify)
@@ -123,7 +161,6 @@
   :init (add-hook 'purescript-mode-hook
             (lambda ()
               (psc-ide-mode)
-              (company-mode)
               (flycheck-mode)
               (turn-on-purescript-indentation))))
 
@@ -187,11 +224,8 @@
 
 (which-key-mode t)
 
-(setq default-frame-alist '((font . "iosevka-10")))
+(setq default-frame-alist '((font . "iosevka-18")))
 
-(global-set-key (kbd "M-x") 'helm-M-x)
-(helm-mode 1)
-(evil-mode 1)
 (global-evil-surround-mode 1)
 (projectile-mode +1)
 ;; no toolbars
@@ -237,8 +271,6 @@
 (add-hook 'scss-mode-hook 'rainbow-mode)
 (add-hook 'prog-mode-hook 'flycheck-mode)
 
-(helm-projectile-on)
-
 (add-hook 'after-init-hook 'global-company-mode)
 (global-evil-leader-mode)
 (evil-leader/set-leader "=")
@@ -266,9 +298,6 @@
 
 (evil-leader/set-key
   "f" 'hydra-files/body
-  "r" 'helm-M-x
-  "<DEL>" 'helm-M-x
-  "g" 'hydra-magit/body
   "v" 'hydra-expand-region/body
   "j" 'hydra-jump/body
   "b" 'hydra-buffers/body
@@ -279,7 +308,6 @@
   "w" 'hydra-window/body
   "e" 'hydra-errors/body
   "x" 'hydra-eval-thing/body
-  "t" 'hydra-helm-resume/body
   )
 
 (defhydra hydra-apps ()
@@ -288,22 +316,11 @@
   )
 
 (defhydra hydra-narrow ()
-  "projectile"
+  "narrow"
   ("d" narrow-to-defun "narrow-to-defun")
   ("n" narrow-to-region "narrow-to-region")
   ("p" narrow-to-page "narrow-to-page")
   ("w" widen "widen")
-  )
-
-(defhydra hydra-helm-resume ()
-  "helm-misc"
-  ("y" helm-show-kill-ring "helm-show-kill-ring" :exit t)
-  ("l" helm-resume "helm-resume" :exit t)
-  )
-
-(defhydra hydra-search ()
-  "projectile"
-  ("a p" helm-do-ag-project-root "ag project" :exit t)
   )
 
 (defhydra hydra-eval-thing ()
@@ -322,15 +339,11 @@
   ("N" flycheck-previous-error "previous error")
   )
 
-
 (defhydra hydra-projectile ()
   "projectile"
-  ("f" helm-projectile-find-file "find file in project" :exit t)
-  ("h" helm-projectile "helm-projectile" :exit t)
   ("k" projectile-kill-buffers "kill project buffers" :exit t)
-  ("p" helm-projectile-switch-project "switch project" :exit t)
-  ("s" helm-do-ag-project-root "ag project" :exit t)
-  ("w" helm-multi-swoop-projectile "ag project" :exit t)
+  ("f" counsel-projectile "select project file" :exit t)
+  ("p" counsel-projectile-switch-project "select project" :exit t)
   ("o" (find-file "~/todo.org") "todo" :exit t)
   )
 
@@ -365,7 +378,6 @@
 
 (defhydra hydra-files ()
   "files"
-  ("f" helm-find-files "find files" :exit t)
   ("s"  save-some-buffers "save some buffers" :exit t)
   )
 
@@ -385,7 +397,6 @@
   "buffers"
   ("n" next-buffer "next buffer")
   ("p" previous-buffer "previous buffer")
-  ("b" helm-buffers-list "list buffers" :exit t)
   ("o" other-window "other window" :exit t)
   ("k" kill-this-buffer "kill this buffer" :exit t)
   ("d" kill-this-buffer "kill this buffer" :exit t)
@@ -414,25 +425,52 @@
 
 (add-hook 'ielm-mode-hook 'ielm-auto-complete)
 
-(setq helm-ag-base-command "rg --vimgrep --no-heading")
 (setq org-tree-slide-slide-in-effect nil)
+
+;; LSP
+(use-package flycheck
+  :ensure t
+  :init
+  (global-flycheck-mode t))
+(use-package yasnippet
+  :ensure t)
+(use-package lsp-mode
+  :ensure t
+  :hook (haskell-mode . lsp)
+  :commands lsp)
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode)
+(use-package lsp-haskell
+ :ensure t
+ :config
+ (setq lsp-haskell-process-path-hie "ghcide")
+ (setq lsp-haskell-process-args-hie '())
+ ;; Comment/uncomment this line to see interactions between lsp client/server.
+ ;;(setq lsp-log-io t)
+ )
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(counsel-mode t)
  '(custom-safe-themes
    (quote
-    ("de1f10725856538a8c373b3a314d41b450b8eba21d653c4a4498d52bb801ecd2" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" default)))
+    ("4e132458143b6bab453e812f03208075189deca7ad5954a4abb27d5afce10a9a" "2f0cbe053485bccbbbb582acdba7c7c9585ad808ee8ab32f0d727c3d39b42275" "b0fd04a1b4b614840073a82a53e88fe2abc3d731462d6fde4e541807825af342" "f5568ed375abea716d1bdfae0316d1d179f69972eaccd1f331b3e9863d7e174a" "614e5089876ea69b515c50b6d7fa0a37eb7ed50fda224623ec49e1c91a0af6a1" "8047ac280914cbe8dcdc489703c398f0941339cfca77dfc09f3641f1f040267c" "e95ad48fd7cb77322e89fa7df2e66282ade015866b0c675b1d5b9e6ed88649b4" "43c808b039893c885bdeec885b4f7572141bd9392da7f0bd8d8346e02b2ec8da" "9c27124b3a653d43b3ffa088cd092c34f3f82296cf0d5d4f719c0c0817e1afa6" "a16e816774b437acb78beb9916a60ea236cfcd05784227a7d829623f8468c5a2" "1a6d627434899f6d21e35b85fee62079db55ef04ecd9b70b82e5d475406d9c69" "ef4edbfc3ec509612f3cf82476beddd2aeb3da7bdc3a35726337a0cc838a4ef4" "06e4b3fdcbadc29ff95a7146dee846cd027cfefca871b2e9142b54ad5de4832f" "34c99997eaa73d64b1aaa95caca9f0d64229871c200c5254526d0062f8074693" "e3c87e869f94af65d358aa279945a3daf46f8185f1a5756ca1c90759024593dd" "155a5de9192c2f6d53efcc9c554892a0d87d87f99ad8cc14b330f4f4be204445" "868abc288f3afe212a70d24de2e156180e97c67ca2e86ba0f2bf9a18c9672f07" "de1f10725856538a8c373b3a314d41b450b8eba21d653c4a4498d52bb801ecd2" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" default)))
  '(dhall-format-at-save t)
  '(dhall-format-command "dhall format")
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(elnode-send-file-program "cat")
+ '(haskell-program-name "cabal repl")
+ '(ivy-count-format "(%d/%d) ")
+ '(ivy-use-virtual-buffers t)
  '(org-agenda-files (quote ("~/todo.org")))
  '(package-selected-packages
    (quote
-    (company-lsp lsp-ui lsp-haskell purescript-mode hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (wgrep expand-region general smex counsel-projectile ivy-rich direnv company-lsp lsp-ui lsp-haskell purescript-mode hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
