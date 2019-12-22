@@ -15,6 +15,7 @@
   :init (  global-set-key (kbd "C-=") 'er/expand-region))
 
 (use-package multiple-cursors :ensure t)
+(use-package vterm)
 
 (use-package matcha
   :load-path "~/.emacs.d/matcha/"
@@ -142,12 +143,10 @@
          :pass  (get-string-from-file "bnc-pass")
          :channels ("#nixos", "#haskell", "#hackeriet"))))
 
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-(setq haskell-process-type 'cabal-repl)
-
 (use-package git-gutter :ensure t)
-(use-package evil :ensure t)
 (use-package wgrep :ensure t)
+(use-package magit-todos :ensure t)
+;; Todo - stuff
 (use-package purescript-mode :ensure t :defer t)
 (global-git-gutter-mode +1)
 (require 'uniquify)
@@ -210,6 +209,7 @@
 ;; make evil-lispy start in the modes you want
 (add-hook 'racket-mode-hook #'evil-lispy-mode)
 (use-package flycheck :ensure t)
+(use-package iedit :ensure t)
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
@@ -343,6 +343,7 @@
   "projectile"
   ("k" projectile-kill-buffers "kill project buffers" :exit t)
   ("f" counsel-projectile "select project file" :exit t)
+  ("s" counsel-projectile-rg "search project" :exit t)
   ("p" counsel-projectile-switch-project "select project" :exit t)
   ("o" (find-file "~/todo.org") "todo" :exit t)
   )
@@ -464,13 +465,15 @@
  '(dhall-format-command "dhall format")
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(elnode-send-file-program "cat")
- '(haskell-program-name "cabal repl")
+ '(eshell-visual-commands
+   (quote
+    ("vi" "screen" "top" "less" "more" "lynx" "ncftp" "pine" "tin" "trn" "elm" "ghcid")))
  '(ivy-count-format "(%d/%d) ")
  '(ivy-use-virtual-buffers t)
  '(org-agenda-files (quote ("~/todo.org")))
  '(package-selected-packages
    (quote
-    (wgrep expand-region general smex counsel-projectile ivy-rich direnv company-lsp lsp-ui lsp-haskell purescript-mode hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (magit-todos magit-todo vterm wgrep expand-region general smex counsel-projectile ivy-rich direnv company-lsp lsp-ui lsp-haskell purescript-mode hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
