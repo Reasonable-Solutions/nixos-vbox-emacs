@@ -39,6 +39,8 @@
    :keymaps 'override
    "SPC" 'matcha-me-space))
 
+(use-package markdown-mode :ensure t :after lsp-ui)
+
 (use-package counsel-projectile
   :after projectile
   :ensure t
@@ -69,6 +71,12 @@
   :bind (("C-s" . swiper)
          ("C-r" . swiper)))
 
+(setq org-todo-keywords
+      (quote ((sequence "TODO(t!)"  "NEXT(n!)" "|" "DONE(d!)")
+	      (sequence "REPEAT(r)"  "WAIT(w!)"  "|"  "PAUSED(p@/!)" "CANCELLED(c@/!)" )
+	      (sequence "IDEA(i!)" "MAYBE(y!)" "STAGED(s!)" "WORKING(k!)" "|" "USED(u!/@)")
+)))
+
 (use-package evil
   :init
   (progn
@@ -78,10 +86,7 @@
       :config
       (progn
         (evil-leader/set-leader "SPC")))
-    (use-package evil-magit
-      :config
-      (progn
-        (evil-leader/set-key "gs" 'magit-status)))
+    (use-package evil-magit)
     (use-package evil-org
       :ensure t
       :init (add-hook 'org-mode-hook 'evil-org-mode))
@@ -213,8 +218,6 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-;; Melpa - only because git-timemachine is broken on nixos
-
 (use-package git-timemachine
 :ensure t
 :defer t)
@@ -234,7 +237,7 @@
 (scroll-bar-mode 0)
 (display-time)
 
-(setq visible-bell nil
+(setq visible-bell t
       inhibit-startup-message t
       color-theme-is-global t
       sentence-end-double-space nil
@@ -303,12 +306,23 @@
   "b" 'hydra-buffers/body
   "a" 'hydra-apps/body
   "p" 'hydra-projectile/body
+  "g" 'hydra-magit/body
   "n" 'hydra-narrow/body
   "s" 'hydra-search/body
   "w" 'hydra-window/body
   "e" 'hydra-errors/body
   "x" 'hydra-eval-thing/body
   )
+
+(defhydra hydra-search ()
+  "search"
+  ("s" swiper "swiper" :exit t)
+  ("j" swiper-avy "swiper-avy" :exit t)
+  ("j" swiper-avy "swiper-avy" :exit t)
+  ("p" counsel-projectile-rg "search project" :exit t)
+  ("t" swiper-thing-at-point "swiper-thing-at-point" :exit t)
+  )
+
 
 (defhydra hydra-apps ()
   "apps"
@@ -371,10 +385,8 @@
   "git carl"
   ("s" magit-status "magit-status" :exit t)
   ("b" magit-blame-addition "magit-blame" :exit t)
-  ("t" git-timemachine "git-timemachine" :color pink)
-  ("n" git-timemachine-show-next-revision "git-timemachine next" :color pink)
-  ("p" git-timemachine-show-previous-revision "git-timemachine prev" :color pink)
-  ("q" git-timemachine-quit "git-timemachine-quit")
+  ("t" git-timemachine "git-timemachine" :exit t)
+  ("o" magit-todos-list "magit-todos-list" :exit t)
   )
 
 (defhydra hydra-files ()
@@ -473,7 +485,7 @@
  '(org-agenda-files (quote ("~/todo.org")))
  '(package-selected-packages
    (quote
-    (magit-todos magit-todo vterm wgrep expand-region general smex counsel-projectile ivy-rich direnv company-lsp lsp-ui lsp-haskell purescript-mode hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
+    (evil-collection magit-todos magit-todo vterm wgrep expand-region general smex counsel-projectile ivy-rich direnv company-lsp lsp-ui lsp-haskell purescript-mode hyperbole handlebars-sgml-mode evil-goggles evil-googles brutalist-theme prettier-js yasnippet-snippets proof-general command-log-mode psc-ide vue-mode google-this outshine dante darcsum material-theme material git-timemachine yaml-mode which-key use-package shackle scss-mode rjsx-mode restclient rainbow-mode rainbow-delimiters powerline nix-mode multiple-cursors multi-term hydra helm-swoop helm-projectile helm-ag haskell-mode handlebars-mode git-gutter flycheck evil-surround evil-org evil-magit evil-leader evil-escape evil-ediff eshell-git-prompt dhall-mode company beacon auctex ace-jump-mode exwm)))
  '(safe-local-variable-values
    (quote
     ((eval progn
