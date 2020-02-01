@@ -10,6 +10,7 @@
 (use-package direnv :ensure t)
 (use-package projectile)
 (use-package smex :ensure t)
+(use-package protobuf-mode :ensure t)
 
 (use-package expand-region :ensure t
   :init (  global-set-key (kbd "C-=") 'er/expand-region))
@@ -39,7 +40,7 @@
    :keymaps 'override
    "SPC" 'matcha-me-space))
 
-(use-package markdown-mode :ensure t :after lsp-ui)
+(use-package markdown-mode :ensure t )
 
 (use-package counsel-projectile
   :after projectile
@@ -105,20 +106,6 @@
   (progn
     (setq evil-cross-lines t)
     (setq evil-move-cursor-back nil)))
-
-(defun eshell-here ()
-  (interactive)
-  (let* ((parent (projectile-project-root))
-         (height (/ (window-total-height) 3))
-         (name   (car (last (split-string parent "/" t)))))
-    (split-window-vertically (- height))
-    (other-window 1)
-    (eshell "new")
-    (rename-buffer (concat "*eshell: " name "*"))
-    (insert (concat "cd " parent))
-    (eshell-send-input)))
-
-(evil-leader/set-key "sh" 'eshell-here)
 
 (use-package doom-modeline
       :hook (after-init . doom-modeline-mode))
